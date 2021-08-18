@@ -5,12 +5,15 @@
  
  In order to make the most precise timer interrupt, the 16-bit Timer/Counter 1 is used.
  From the user manual p.101, the perferred calculated TOP value is 1.02/(1/16M*2*N)-1=31874 with prescaler N=256. CTC mode is used. Interrupt will be attached to the Compare timer.
+ 
+ The code can be tested on real hardware by uncommenting the commented code. Probe PB0 to observe a square wave with the period of 1.02*2=2.04s.
  *
  * Created: 13/08/2021 18:05:25
  * Author : User
  */ 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 /* Declarations of the functions */
 void init(void);
@@ -23,10 +26,12 @@ int main(void)
 {
     /* Initialisation */
 	init();
+	// DDRB = 1; // Uncomment this to test
 	
 	/* empty loop, probably do something in this loop */
     while (1) 
     {
+		// PORTB = itter & 1; // Uncomment this to test
     }
 }
 
@@ -35,7 +40,7 @@ int main(void)
 /************************************************************************/
 void init(void)
 {
-	init_timer1();
+	init_timer1(); // Init the Timer 1 configurations
 }
 
 /************************************************************************/
@@ -53,8 +58,11 @@ void init_timer1()
 	/* Set the higher 8 bits of 31874 */
 	OCR1AH = (31874 >> 8) & 0xFF;
 	
-	/* Set Input Capture Interrupt Enable and Output Compare A Match Interrupt Enable */
-	TIMSK1 = 1<<ICIE1 | 1<<OCIE1A;
+	/* Set Output Compare A Match Interrupt Enable */
+	TIMSK1 = 1<<OCIE1A;
+	
+	/* Enable global interrupt */
+	sei();
 }
 
 /************************************************************************/
