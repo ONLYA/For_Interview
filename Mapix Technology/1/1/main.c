@@ -4,7 +4,7 @@
  This is to increase a variable called "itter" every 1.02 seconds with timer interrupt. The timer resolution should be as high as possible.
  
  In order to make the most precise timer interrupt, the 16-bit Timer/Counter 1 is used.
- From the user manual p.101, the perferred calculated TOP value is 1.02/(1/16M*2*N)-1=31874 with prescaler N=256. CTC mode is used. Interrupt will be attached to the Compare timer.
+ From the user manual p.101, the perferred calculated TOP value is 1.02/(1/16M*N)-1=63749 with prescaler N=256. CTC mode is used. Interrupt will be attached to the Compare timer.
  
  The code can be tested on real hardware by uncommenting the commented code. Probe PB0 to observe a square wave with the period of 1.02*2=2.04s.
  *
@@ -52,11 +52,8 @@ void init_timer1()
 	/* Set CTC mode with TOP value of OCR1A, and set clock prescaler of 256 */
 	TCCR1B = 1<<WGM12 | 1<<CS12;
 	
-	/* Set TOP value of 31874 */
-	/* Set the lower 8 bits of 31874 */
-	OCR1AL = (31874) & 0xFF;
-	/* Set the higher 8 bits of 31874 */
-	OCR1AH = (31874 >> 8) & 0xFF;
+	/* Set TOP value of 63749 */
+	OCR1A = 63749;
 	
 	/* Set Output Compare A Match Interrupt Enable */
 	TIMSK1 = 1<<OCIE1A;
